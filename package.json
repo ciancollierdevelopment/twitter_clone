@@ -1,0 +1,16 @@
+{
+  "name": "twitter_clone",
+  "version": "1.0.0",
+  "description": "A project aiming to replicate Twitter functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cian Collier",
+  "license": "ISC",
+  "dependencies": {
+    "cookies": "^0.7.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.19"
+  }
+}
