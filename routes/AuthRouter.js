@@ -97,7 +97,11 @@ Router.post('/login', async (req, res) => {
           const updated_to_zero = await found_user.update({login_attempts: 0});
 
           const user_cookies = new Cookies(req, res, {keys: cookie_keys});
-          user_cookies.set('user', found_user.username, {signed: true});
+
+          // Cookie expires in one month
+          const cookie_set = await user_cookies.set('user', found_user.username, {signed: true, maxAge: 2592000000});
+
+          return res.json({errors: [], user: found_user.username, first_name: found_user.first_name, last_name: found_user.last_name, email: found_user.email});
         } else {
           errors.push("passwordincorrect");
           const updated_login_attempts = await found_user.update({login_attempts: found_user.login_attempts + 1});
@@ -113,16 +117,16 @@ Router.post('/login', async (req, res) => {
     errors.push("usernotfound");
   }
 
-  res.json({errors: errors});
+  return res.json({errors: errors});
 });
 
-Router.post('/logout', (req, res) => {
+Router.get('/logout', async (req, res) => {
   const user_cookies = new Cookies(req, res, {keys: cookie_keys});
   const current_user = user_cookies.get('user', {signed: true});
 
   if (current_user) {
-    user_cookies.set('user', '', {signed: true});
-    res.json({errors: false});
+    const cookie_set = await user_cookies.set('user', '', {signed: true});
+    res.redirect('/');
   } else {
     res.json({errors: true});
   }
@@ -170,6 +174,18 @@ Router.post('/resetpassword', async (req, res) => {
   }
 
   res.json({errors: errors});
+});
+
+Router.get('/currentuser', async (req, res) => {
+  let user_cookies = new Cookies(req, res, {keys: cookie_keys});
+  let user = user_cookies.get('user', {signed: true});
+
+  if (user) {
+    const found_user = await User.findOne({username: user});
+    res.json({error: false, username: user, first_name: found_user.first_name, last_name: found_user.last_name, email: found_user.email});
+  } else {
+    res.json({error: true});
+  }
 });
 
 module.exports = Router;
