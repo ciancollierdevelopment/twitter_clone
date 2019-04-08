@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const AuthRouter = require('./routes/AuthRouter');
+const PostRouter = require('./routes/PostRouter');
 const path = require('path');
 
 // Connect to MongoDB Database
@@ -19,9 +20,11 @@ mongoose.connect(config.mongoDB, (err) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/auth', AuthRouter);
+app.use('/post', PostRouter);
 
 // Serve the React app
 app.use('/', express.static(path.join(__dirname, 'client/build')));
+app.use('/*', express.static(path.join(__dirname, 'client/build')));
 
 
 app.listen(5000);

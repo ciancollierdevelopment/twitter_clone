@@ -68,7 +68,7 @@ Router.get('/confirm/:username/:code', async (req, res) => {
 
   if (found_user) {
     const updated = await found_user.update({valid: true});
-    res.json({error: false});
+    res.redirect(config.domain);
   } else {
     res.json({error: true});
   }
